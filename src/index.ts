@@ -1,8 +1,6 @@
 import { registerPlugin } from '@capacitor/core';
 
-export interface EsimManagerPlugin{
-  checkESimSupport():Promise<{supported:boolean}>
-}
+import type { EsimManagerPlugin } from './definitions';
 
 const EsimManager = registerPlugin<EsimManagerPlugin>('EsimManager', {
   web: () => import('./web').then(m => new m.EsimManagerWeb()),
