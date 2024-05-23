@@ -1,5 +1,6 @@
 import Foundation
 import Capacitor
+import CoreTelephony
 
 /**
  * Please read the Capacitor iOS Plugin Development Guide
@@ -19,5 +20,31 @@ public class EsimManagerPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve([
             "value": implementation.echo(value)
         ])
+    }
+
+    @objc func checkESimSupport(_ call: CAPPluginCall) {
+        if #available(iOS 12.1, *) {
+            let support = self.isESimSupported()
+            call.resolve([
+                "supported": support
+            ])
+        } else {
+            call.resolve([
+                "supported": false
+            ])
+        }
+    }
+
+     private func isESimSupported() -> Bool {
+        if let cellularProvider = CTTelephonyNetworkInfo().serviceSubscriberCellularProviders?.first?.value {
+            return cellularProvider.supportsCellularPlan()
+        }
+        return false
+    }
+}
+
+extension CTCarrier {
+    func supportsCellularPlan() -> Bool {
+        return self.allowsVOIP
     }
 }
